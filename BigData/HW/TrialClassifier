@@ -1,0 +1,215 @@
+import random
+import nltk
+from nltk.metrics import ConfusionMatrix
+
+
+def first_letter_feature(word):
+    return {'first_letter': word[0]}
+
+
+def second_letter_feature(word):
+    return {'second_letter': word[1]}
+
+
+def first_letter_second_word_feature(word):
+    name = word.split();
+    if len(name) > 1:
+        return {'first_letter_second_word': name[len(name)-1][0]}
+    else:
+        return {'first_letter_second_word': "a"}
+
+
+def second_letter_second_word_feature(word):
+    name = word.split();
+    if len(name) > 1:
+        return {'second_letter_second_word': name[len(name)-1][1]}
+    else:
+        return {'second_letter_second_word': "a"}
+
+
+train = [('Naoki Abe', '+'),
+         ('Myriam Abramson', '-'),
+         ('David W. Aha', '+'),
+         ('Kamal M. Ali', '+'),
+         ('Eric Allender', '-'),
+         ('Dana Angluin', '+'),
+         ('Chidanand Apte', '-'),
+         ('Minoru Asada', '+'),
+         ('Lars Asker', '+'),
+         ('Javed Aslam', '+'),
+         ('Haralabos Athanassiou', '+'),
+         ('Jose L. Balcazar', '+'),
+         ('Timothy P. Barber', '+'),
+         ('Michael W. Barley', '+'),
+         ('Cristina Baroglio', '-'),
+         ('Peter Bartlett', '+'),
+         ('Eric Baum', '-'),
+         ('Welton Becket', '+'),
+         ('Shai Ben', '-'),
+         ('David', '+'),
+         ('George Berg', '+'),
+         ('Neil Berkman', '+'),
+         ('Malini Bhandaru', '+'),
+         ('Bir Bhanu', '+'),
+         ('Reinhard Blasig', '+'),
+         ('Avrim Blum', '-'),
+         ('Anselm Blumer', '-'),
+         ('Justin Boyan', '+'),
+         ('Carla E. Brodley', '+'),
+         ('Nader Bshouty', '+'),
+         ('Wray Buntine', '-'),
+         ('Andrey Burago', '-'),
+         ('Tom Bylander', '+'),
+         ('Bill Byrne', '+'),
+         ('Claire Cardie', '-'),
+         ('Richard A. Caruana', '+'),
+         ('John Case', '+'),
+         ('Jason Catlett', '+'),
+         ('Nicolo Cesa-Bianchi', '+'),
+         ('Philip Chan', '-'),
+         ('Mark Changizi', '+'),
+         ('Pang-Chieh Chen', '+'),
+         ('Zhixiang Chen', '-'),
+         ('Wan P. Chiang', '+'),
+         ('Steve A. Chien', '-'),
+         ('Jeffery Clouse', '+'),
+         ('William Cohen', '+'),
+         ('David Cohn', '+'),
+         ('Clare Bates Congdon', '-'),
+         ('Antoine Cornuejols', '-'),
+         ('Russell Greiner', '+'),
+         ('James S. Royer', '+'),
+         ('Ronitt Rubinfeld', '+'),
+         ('Stuart Russell', '-'),
+         ('Lorenza Saitta', '+'),
+         ('Yoshifumi Sakai', '+'),
+         ('William Sakas', '+'),
+         ('Marcos Salganicoff', '+'),
+         ('Steven Salzberg', '-'),
+         ('Claude Sammut', '-'),
+         ('Cullen Schaffer', '+'),
+         ('Robert Schapire', '+'),
+         ('Mark Schwabacher', '+'),
+         ('Michele Sebag', '+'),
+         ('Gary M. Selzer', '+'),
+         ('Sebastian Seung', '+'),
+         ('Arun Sharma', '-'),
+         ('Jude Shavlik', '+'),
+         ('Daniel L. Silver', '+'),
+         ('Glenn Silverstein', '-'),
+         ('Yoram Singer', '+'),
+         ('Mona Singh', '+'),
+         ('Satinder Pal Singh', '+'),
+         ('Kimmen Sjolander', '+'),
+         ('David B. Skalak', '+'),
+         ('Sean Slattery', '+'),
+         ('Robert Sloan', '+'),
+         ('Donna Slonim', '+'),
+         ('Carl H. Smith', '+'),
+         ('Sonya Snedecor', '+'),
+         ('Von-Wun Soo', '+'),
+         ('Thomas G. Spalthoff', '-'),
+         ('Mark Staley', '+'),  
+         ('Frank Stephan', '-'),  
+         ('Mandayam T. Suraj', '+'), 
+         ('Richard S. Sutton', '+'),  
+         ('Joe Suzuki', '+'),  
+         ('Prasad Tadepalli', '-'),  
+         ('Hiroshi Tanaka', '+'),  
+         ('Irina Tchoumatchenko', '-'),  
+         ('Brian Tester', '-'),  
+         ('Chen K. Tham', '-'),  
+         ('Tatsuo Unemi', '+'),  
+         ('Lyle H. Ungar', '-'),
+         ('Paul Utgoff', '+'),
+         ('Karsten Verbeurgt', '+'),
+         ('Paul Vitanyi', '+'),
+         ('Xuemei Wang', '+'),
+         ('Manfred Warmuth', '+'),
+         ('Gary Weiss', '+'),  
+         ('Sholom Weiss', '-'),  
+         ('Thomas Wengerek', '-'),  
+         ('Bradley L. Whitehall', '-'),  
+         ('Alma Whitten', '-'),  
+         ('Robert Williamson', '+'),  
+         ('Janusz Wnek', '+'),  
+         ('Kenji Yamanishi', '+'), 
+         ('Takefumi Yamazaki', '+'),  
+         ('Holly Yanco', '+'),  
+         ('John M. Zelle', '+'),
+         ('Thomas Zeugmann', '-')
+         ]
+
+print("Classifier on first letter of first name")
+data = train
+random.shuffle(data)
+featureSets = [(first_letter_feature(n), sign) for (n, sign) in data]
+print featureSets
+"""
+train_set, test_set = featureSets[55:], featureSets[:55]
+classifierFirstLetter = nltk.NaiveBayesClassifier.train(train_set)
+print("accuracy")
+print(nltk.classify.accuracy(classifierFirstLetter, test_set))
+
+actualSign = []
+predictedSign = []
+for (name, sign) in train[:55]:
+    actualSign.append(classifierFirstLetter.classify(first_letter_feature(name)))
+    predictedSign.append(sign)
+
+print("Confusion Matrix")
+print(ConfusionMatrix(actualSign, predictedSign))
+
+print("Classifier on second letter of first name")
+data = train
+random.shuffle(data)
+featureSets = [(second_letter_feature(n), sign) for (n, sign) in data]
+train_set, test_set = featureSets[55:], featureSets[:55]
+classifierSecondLetter = nltk.NaiveBayesClassifier.train(train_set)
+print("accuracy")
+print(nltk.classify.accuracy(classifierSecondLetter, test_set))
+
+actualSign = []
+predictedSign = []
+for (name, sign) in train[:55]:
+    actualSign.append(classifierSecondLetter.classify(second_letter_feature(name)))
+    predictedSign.append(sign)
+
+print("Confusion Matrix")
+print(ConfusionMatrix(actualSign, predictedSign))
+
+print("Classifier on first letter of Second name")
+data = train
+random.shuffle(data)
+featureSets = [(first_letter_second_word_feature(n), sign) for (n, sign) in data]
+train_set, test_set = featureSets[55:], featureSets[:55]
+classifierFirstLetterSecondWord = nltk.NaiveBayesClassifier.train(train_set)
+print("accuracy")
+print(nltk.classify.accuracy(classifierFirstLetterSecondWord, test_set))
+
+actualSign = []
+predictedSign = []
+for (name, sign) in train[:55]:
+    actualSign.append(classifierFirstLetterSecondWord.classify(first_letter_second_word_feature(name)))
+    predictedSign.append(sign)
+print("Confusion Matrix")
+print(ConfusionMatrix(actualSign, predictedSign))
+
+print("Classifier on second letter of second name")
+data = train
+random.shuffle(data)
+featureSets = [(second_letter_second_word_feature(n), sign) for (n, sign) in data]
+train_set, test_set = featureSets[55:], featureSets[:55]
+classifierSecondLetterSecondWord = nltk.NaiveBayesClassifier.train(train_set)
+print("accuracy")
+print(nltk.classify.accuracy(classifierSecondLetterSecondWord, test_set))
+
+actualSign = []
+predictedSign = []
+for (name, sign) in train[:55]:
+    actualSign.append(classifierSecondLetterSecondWord.classify(second_letter_second_word_feature(name)))
+    predictedSign.append(sign)
+
+print("Confusion Matrix")
+print(ConfusionMatrix(actualSign, predictedSign))
+"""
